@@ -1,0 +1,46 @@
+Expt 1 A) BLOCK TRANSFER
+
+
+
+org 0000h
+
+MOV R2, #10			;number of elements to transfer
+MOV R0, #30h		;source base address
+MOV R1, #40h		;destination base address
+
+s1:	MOV A, @R0		;copy source address data into accumulator
+	MOV @R1, A		;copy accumulator data into destination address
+	INC R0			;move to next address in source
+	INC R1			;move to next address in destination
+	DJNZ R2, s1		;check condition and restat loop
+
+here:	SJMP here
+end
+
+
+
+
+
+
+
+
+Expt 1 B) ROM to ROM location Data Transfer
+
+	ORG 0000H
+
+	MOV R2,#6H		;MOV 6H TO R2
+	MOV R0,#40H		;MOV 40H TO R0
+	MOV DPTR,#300H		;MOV 300H TO DPTR
+HERE:CLR A			;LOOP:CLEAR A
+	MOVC A,@a+DPTR		;MOV @A+DPTR TO A
+	MOV @R0,A		;MOV A TO @R0
+	IND DPTR		;INCREMENT DPTR
+	INC R0			;INCREMENT R0
+	DJNZ R2,HERE		;DECREMENT R2 IF NOT ZERO
+	
+	
+	ORG 300H
+DB 'M','E','S','C','O','E'	; DEFINE BYTE
+
+HERE1:SJMP HERE1
+
