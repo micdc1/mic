@@ -1,0 +1,54 @@
+ Exp 2 LED Module Interface With 
+Microcontroller
+CODE :
+
+#include <reg51.h>
+void delay(int);
+void main()
+{
+ while(1)
+ {
+ P3=0x55;
+ dealy(1000);
+ P3=0x00;
+ dealy(1000);
+ }
+}
+void delay(int n)
+{
+ int i,j;
+ for(i=0;i<n;i++)
+ for(j=0;j<=1275;j++);
+}
+ 
+ 
+ 
+ 
+ 
+ Exp 3 Seven segment module interface 
+with Microcontroller 
+CODE :
+#include <reg51.h>
+void delay(int);
+sbit sel=P3^7;
+void main()
+{
+ int data_arr[16] ={0x88,0xEB,0x4C,0x49,0x2B,0x19, 0x18,
+ 0x0CB,0x08,0x09,0x0A,0x38,0x9C,0x68,0x1C,0x1E};
+ int a,b;
+ while(1)
+ {
+ for(a=0;a<10;a++)
+ {
+ P2=data_arr[a];
+ delay(50);
+ }
+ sel=0;
+ }
+}
+void delay(int n)
+{
+ int i,j;
+ for(i=0;i<n;i++)
+ for(j=0;j<=1275;j++);
+}
