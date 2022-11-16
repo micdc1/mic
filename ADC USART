@@ -1,0 +1,75 @@
+MIC Practical ADC Using USART
+#include<p18f4520.h>
+#include<stdio.h>
+#include"USART.h"
+#pragma config OSC = HS
+#pragma config WDT = OFF
+#pragma config LVP = OFF
+void InitUSART();
+unsigned char putchar(unsigned char ch);
+unsigned char getchar(void);
+void delay(void)
+{
+unsigned long int i = 0;
+for(i=0;i<=90000;i++);
+}
+void InitADC(void)
+{
+ADCON0 = 0x01; //ADCand Select Channel 0(RA0/AN0))
+ADCON1 = 0x00; //Reference voltage(VDD-VSS)
+ADCON2 = 0x8E; //Acquisition Time and Conversion Clock
+}
+void main(void)
+{
+unsigned int Lresult=0,Hresult=0;
+unsigned int Result,Result1;
+unsigned long int voltage;
+char adc_read[16];
+TRISA|=0x01; //Input
+TRISB= 0XFF;
+InitUSART();
+printf("ADC TEST (ADC CHN 0)!\r\n");
+InitADC();
+Result1 = 5000UL;
+while(1)
+{
+ADCON0|=0x02;
+while(!(ADCON0 & 0x02));
+Lresult = ADRESL;
+Hresult = ADRESH;
+Result = (Hresult<<8)|Lresult;
+voltage = ((Result*5000UL)/1024); //UL: UPPER LIMIT as ref 5V
+printf("\r\n Digital Reading = 0x%03x:%04lu mV\r\n",Result,voltage); //lu :log integer decimal 
+integer will not come 
+sprintf(adc_read,"C=0x%x:%lumV",Result,voltage);
+delay();
+}
+}
+//*********************************USART***********************************//
+void InitUSART()
+{
+TRISCbits.TRISC6 = 1;
+TRISCbits.TRISC7 = 1;
+#ifdef INT_OSC
+SPBRG=12;
+#else
+SPBRG = 31;
+#endif
+TXSTA=0x20;
+TXSTAbits.TXEN = 1;
+RCSTAbits.SPEN = 1;
+RCSTAbits.CREN = 1;
+}
+unsigned char getchar(void)
+{
+unsigned char ch;
+while(!(PIR1bits.RCIF==1));
+ch=RCREG;
+return ch;
+}
+unsigned char putchar(unsigned char ch)
+{
+while(!(PIR1bits.TXIF==1));
+TXREG=ch;
+return ch;
+}
